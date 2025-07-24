@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <!-- Card Header -->
+                <div class="card-header bg-info text-white text-center">
+                    <h3><i class="bi bi-pencil-square"></i> Edit Profile</h3>
+                </div>
+
+                <div class="card-body">
+                    <!-- Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                <strong>{{ message }}</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Profile Picture Placeholder -->
+                    <div class="text-center mb-3">
+                        <img src="{% if user.profile.image %}{{ user.profile.image.url }}{% else %}https://via.placeholder.com/120{% endif %}" 
+                             alt="Profile Image" 
+                             class="rounded-circle img-thumbnail" 
+                             width="120" height="120">
+                    </div>
+
+                    <!-- Edit Profile Form -->
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label"><i class="bi bi-person"></i> Username</label>
+                            {{ form.username }}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label"><i class="bi bi-envelope"></i> Email</label>
+                            {{ form.email }}
+                        </div>
+
+                        <!-- Profile Picture Upload -->
+                        <div class="mb-3">
+                            <label for="id_image" class="form-label"><i class="bi bi-camera"></i> Upload Profile Picture</label>
+                            {{ form.image }}
+                        </div>
+
+                        <!-- Save Changes Button -->
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-save"></i> Save Changes</button>
+                    </form>
+
+                    <!-- Back to Profile Link -->
+                    <div class="text-center mt-3">
+                        <p><a href="{% url 'profile' %}"><i class="bi bi-arrow-left"></i> Back to Profile</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+{% endblock %}

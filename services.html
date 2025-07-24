@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Our Services - Hacker{% endblock title %}
+
+{% block body %}
+<div class="container my-5">
+    <h1 class="text-center">Our Services</h1>
+    <p class="text-center">
+        At Hacker, we offer a range of top-notch cybersecurity services to meet your needs.
+    </p>
+    <div class="row mt-4">
+        <!-- Service 1 -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow">
+                <img src="static/eh.webp" width="300px" height="200px" class="card-img-top" alt="Ethical Hacking">
+                <div class="card-body">
+                    <h5 class="card-title">Ethical Hacking</h5>
+                    <p class="card-text">
+                        Identify and fix vulnerabilities in your systems with our expert ethical hacking services.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow">
+                <img src="static/pt.webp" width="300px" height="200px" class="card-img-top" alt="Penetration Testing">
+                <div class="card-body">
+                    <h5 class="card-title">Penetration Testing</h5>
+                    <p class="card-text">
+                        Simulate cyberattacks to evaluate your organization's security defenses.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow">
+                <img src="static/aeh.webp" width="300px" height="200px" class="card-img-top" alt="Advanced Hacking">
+                <div class="card-body">
+                    <h5 class="card-title">Advanced Hacking Training</h5>
+                    <p class="card-text">
+                        Gain in-depth knowledge and hands-on experience with advanced hacking techniques.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
