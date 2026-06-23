@@ -1,0 +1,1 @@
+# MSA app migrations package
