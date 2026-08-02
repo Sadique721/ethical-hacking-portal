@@ -1,0 +1,38 @@
+{% if error %}
+    <div class="alert alert-warning border-warning bg-dark text-warning font-monospace small mb-3">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i> STATUS_ALERT: {{ error }}
+    </div>
+{% endif %}
+
+{% if query %}
+    <div class="card bg-dark text-white border-secondary">
+        <div class="card-header bg-secondary text-white font-monospace">
+            SEARCH_RESULTS: "{{ query }}"
+        </div>
+        <div class="card-body p-0">
+            {% for cve in results %}
+                <div class="p-3 border-bottom border-secondary last-border-none">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="text-info font-monospace mb-0">{{ cve.id }}</h5>
+                        <div>
+                            <span class="badge bg-{% if cve.severity == 'CRITICAL' %}danger{% elif cve.severity == 'HIGH' %}danger{% elif cve.severity == 'MEDIUM' %}warning text-dark{% else %}primary{% endif %} me-2">
+                                {{ cve.severity }}
+                            </span>
+                            <span class="badge bg-secondary font-monospace">{{ cve.score }}</span>
+                        </div>
+                    </div>
+                    <p class="text-light font-monospace mb-0 small" style="line-height: 1.5;">{{ cve.description }}</p>
+                </div>
+            {% empty %}
+                <div class="p-4 text-center text-secondary font-monospace">
+                    NO_RESULTS_FOUND: No CVE matches found in database.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% else %}
+    <div class="text-center py-5 text-secondary font-monospace bg-dark border border-secondary rounded">
+        <i class="bi bi-terminal fs-2 text-info mb-2 d-block"></i>
+        AWAITING_INPUT: Please enter a query above to initiate vulnerability lookup.
+    </div>
+{% endif %}

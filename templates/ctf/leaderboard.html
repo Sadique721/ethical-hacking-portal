@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Leaderboard{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-white"><i class="bi bi-trophy-fill text-warning me-2"></i> GLOBAL_LEADERBOARD</h2>
+                <a href="{% url 'challenges_list' %}" class="btn btn-outline-danger font-monospace">
+                    <i class="bi bi-flag"></i> CHALLENGES
+                </a>
+            </div>
+
+            <div class="card shadow-lg bg-dark text-white border-secondary">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover table-striped mb-0 align-middle">
+                            <thead class="table-secondary text-uppercase font-monospace">
+                                <tr>
+                                    <th scope="col" class="text-center" style="width: 80px;">Rank</th>
+                                    <th scope="col">Researcher</th>
+                                    <th scope="col">Specialization</th>
+                                    <th scope="col" class="text-center">Skill Level</th>
+                                    <th scope="col" class="text-end" style="width: 150px; padding-right: 25px;">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for researcher in profiles %}
+                                    <tr class="{% if researcher.user == request.user %}table-info text-dark{% endif %}">
+                                        <!-- Rank -->
+                                        <td class="text-center font-monospace fw-bold">
+                                            {% if forloop.counter == 1 %}
+                                                🥇 1
+                                            {% elif forloop.counter == 2 %}
+                                                🥈 2
+                                            {% elif forloop.counter == 3 %}
+                                                🥉 3
+                                            {% else %}
+                                                #{{ forloop.counter }}
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- Username / Avatar -->
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ researcher.get_avatar_url }}" 
+                                                     alt="Avatar" 
+                                                     class="rounded-circle border border-secondary bg-black me-3" 
+                                                     width="40" height="40">
+                                                <div>
+                                                    <span class="fw-bold font-monospace">
+                                                        {{ researcher.user.username }}
+                                                    </span>
+                                                    {% if researcher.is_verified_researcher %}
+                                                        <span class="badge bg-info text-dark ms-1" style="font-size: 9px;"><i class="bi bi-patch-check-fill"></i></span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        
+                                        <!-- Specialization -->
+                                        <td class="font-monospace">
+                                            {{ researcher.specialization }}
+                                        </td>
+                                        
+                                        <!-- Skill Level -->
+                                        <td class="text-center">
+                                            <span class="badge 
+                                                {% if researcher.skill_level == 'Beginner' %}bg-success
+                                                {% elif researcher.skill_level == 'Intermediate' %}bg-primary
+                                                {% elif researcher.skill_level == 'Advanced' %}bg-warning text-dark
+                                                {% else %}bg-danger
+                                                {% endif %} font-monospace">
+                                                {{ researcher.skill_level }}
+                                            </span>
+                                        </td>
+                                        
+                                        <!-- Points -->
+                                        <td class="text-end font-monospace fw-bold" style="padding-right: 25px;">
+                                            {{ researcher.points }}
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center p-4 text-secondary font-monospace">
+                                            NO_DATA: Leaderboard is currently empty.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

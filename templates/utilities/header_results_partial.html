@@ -1,0 +1,62 @@
+{% if error %}
+    <div class="alert alert-danger border-danger bg-dark text-danger font-monospace small mb-3">
+        <i class="bi bi-x-circle-fill me-1"></i> SCAN_ERROR: {{ error }}
+    </div>
+{% endif %}
+
+{% if results %}
+    <div class="card bg-dark text-white border-secondary mb-4">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center font-monospace">
+            <span>SCAN_REPORT: {{ results.url }}</span>
+            <span class="badge bg-{% if results.grade == 'A+' or results.grade == 'A' %}success{% elif results.grade == 'B' %}primary{% elif results.grade == 'C' %}warning text-dark{% else %}danger{% endif %} font-monospace fs-6">
+                GRADE: {{ results.grade }}
+            </span>
+        </div>
+        <div class="card-body">
+            
+            <div class="text-center py-3 mb-4 bg-black border border-secondary rounded">
+                <p class="mb-1 text-secondary font-monospace small">SECURITY_SCORE</p>
+                <h2 class="display-6 fw-bold text-success font-monospace mb-0">{{ results.score }} / 100</h2>
+            </div>
+
+            <h5 class="text-info border-bottom border-secondary pb-2 mb-3">Security Header Audit</h5>
+            
+            {% for key, header in results.headers.items %}
+                <div class="mb-3 p-3 bg-black border border-secondary rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-white font-monospace mb-0">
+                            {{ header.name }}
+                        </h6>
+                        <span class="badge bg-{% if header.present %}success{% else %}danger{% endif %} font-monospace">
+                            {% if header.present %}PRESENT{% else %}MISSING{% endif %}
+                        </span>
+                    </div>
+                    <p class="text-secondary small mb-2 font-monospace">{{ header.description }}</p>
+                    <div class="p-2 bg-dark rounded border border-secondary small text-info font-monospace overflow-auto" style="max-height: 80px;">
+                        <code>{{ header.value }}</code>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Raw Headers Accordion -->
+            <div class="mt-4">
+                <button class="btn btn-outline-secondary btn-sm w-100 font-monospace" type="button" data-bs-toggle="collapse" data-bs-target="#rawHeaders" aria-expanded="false">
+                    <i class="bi bi-file-earmark-code"></i> VIEW_RAW_RESPONSE_HEADERS
+                </button>
+                <div class="collapse mt-2" id="rawHeaders">
+                    <div class="card card-body bg-black text-info border-secondary font-monospace small overflow-auto" style="max-height: 250px;">
+                        {% for k, v in results.raw_headers.items %}
+                            <div><strong>{{ k }}:</strong> {{ v }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% elif not error %}
+    <div class="text-center py-5 text-secondary font-monospace bg-dark border border-secondary rounded">
+        <i class="bi bi-activity fs-2 text-success mb-2 d-block"></i>
+        AWAITING_TARGET: Please submit a target hostname above to perform headers security audit.
+    </div>
+{% endif %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} | Write-ups{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <a href="{% url 'writeups_list' %}" class="btn btn-outline-secondary font-monospace btn-sm mb-4">
+                <i class="bi bi-arrow-left"></i> BACK_TO_WRITEUPS
+            </a>
+
+            <article class="card bg-dark text-white border-secondary shadow-lg">
+                <div class="card-header border-secondary py-3">
+                    <h1 class="text-info">{{ post.title }}</h1>
+                    <div class="text-secondary small font-monospace mt-2">
+                        <span><i class="bi bi-person"></i> Published by <b>{{ post.author.username }}</b></span>
+                        <span class="mx-2">|</span>
+                        <span><i class="bi bi-calendar"></i> {{ post.created_at|date:"F d, Y H:i" }}</span>
+                        {% if post.created_at != post.updated_at %}
+                            <span class="mx-2">|</span>
+                            <span><i class="bi bi-clock-history"></i> Updated: {{ post.updated_at|date:"F d, Y H:i" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-body p-4 writeup-content font-monospace text-light" style="line-height: 1.6;">
+                    <!-- Rendered and Sanitized Markdown Content -->
+                    {{ content|safe }}
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+<!-- Custom CSS for Markdown Rendering inside dark cards -->
+<style>
+    .writeup-content h1, .writeup-content h2, .writeup-content h3 {
+        color: #38bdf8; /* sky 400 */
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        border-bottom: 1px solid #334155; /* slate 700 */
+        padding-bottom: 0.25rem;
+    }
+    .writeup-content pre {
+        background-color: #000000 !important;
+        border: 1px solid #475569;
+        border-radius: 4px;
+        padding: 1rem;
+        overflow-x: auto;
+        margin: 1.2rem 0;
+    }
+    .writeup-content code {
+        color: #f43f5e; /* rose 500 */
+        background-color: #1e1b4b; /* indigo 950 */
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: var(--bs-font-monospace);
+    }
+    .writeup-content pre code {
+        color: #38bdf8;
+        background-color: transparent;
+        padding: 0;
+    }
+    .writeup-content blockquote {
+        border-left: 4px solid #0284c7; /* sky 600 */
+        background-color: #0f172a;
+        margin: 1rem 0;
+        padding: 0.5rem 1rem;
+        color: #94a3b8;
+    }
+    .writeup-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+    }
+    .writeup-content th, .writeup-content td {
+        border: 1px solid #475569;
+        padding: 0.5rem;
+    }
+    .writeup-content th {
+        background-color: #1e293b;
+    }
+</style>
+{% endblock %}

@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from . import views_2fa
 
 urlpatterns = [
     # Main pages
@@ -18,7 +19,11 @@ urlpatterns = [
     path('login', views.user_login, name='login'),
     path('logout', views.user_logout, name='logout'),
     path('register', views.user_register, name='register'),
-    path('registers', views.registers, name='registers'),
+
+    # Custom TOTP 2FA
+    path('enable-2fa', views_2fa.enable_2fa, name='enable_2fa'),
+    path('disable-2fa', views_2fa.disable_2fa, name='disable_2fa'),
+    path('verify-2fa', views_2fa.verify_2fa, name='verify_2fa'),
 
     # Password Reset
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='password_reset_form.html'), name='password_reset'),

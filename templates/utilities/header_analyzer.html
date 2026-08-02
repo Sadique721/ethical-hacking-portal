@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}HTTP Header Security Analyzer{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="text-white"><i class="bi bi-shield-check text-success me-2"></i> HTTP_HEADER_ANALYZER</h2>
+                    <p class="text-secondary">Scan public websites to inspect security-hardening response headers (CSP, HSTS, X-Frame-Options).</p>
+                </div>
+            </div>
+
+            <!-- Scan Form -->
+            <div class="card bg-dark border-secondary text-white mb-4">
+                <div class="card-body">
+                    <form hx-get="{% url 'header_analyzer' %}" hx-target="#header-results" hx-indicator="#scan-indicator">
+                        <div class="mb-3">
+                            <label for="url" class="form-label text-success">Target URL to Analyze:</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-black border-secondary text-secondary">https://</span>
+                                <input type="text" id="url" name="url" class="form-control bg-black text-white border-secondary font-monospace" 
+                                       placeholder="example.com" 
+                                       required
+                                       value="{{ url }}">
+                                <button class="btn btn-success font-monospace" type="submit">ANALYZE_HOST</button>
+                            </div>
+                            <div class="form-text text-secondary mt-1">Passive scan only. No exploitation payloads are sent.</div>
+                        </div>
+                    </form>
+                    
+                    <!-- Scan Indicator -->
+                    <div id="scan-indicator" class="htmx-indicator text-center py-2">
+                        <div class="spinner-border spinner-border-sm text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span class="text-success font-monospace ms-2">ESTABLISHING_TLS_CONNECTION... ANALYZING_HEADERS...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="header-results">
+                {% include 'utilities/header_results_partial.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

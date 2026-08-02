@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}NVD CVE Database Lookup{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="text-white"><i class="bi bi-search text-info me-2"></i> CVE_DATABASE_LOOKUP</h2>
+                    <p class="text-secondary">Query the National Vulnerability Database (NVD) API for live vulnerability disclosures.</p>
+                </div>
+            </div>
+
+            <!-- Search Form -->
+            <div class="card bg-dark border-secondary text-white mb-4">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="query" class="form-label text-info">Search by CVE ID (e.g. CVE-2021-44228) or Keywords (e.g. Log4j):</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-black border-secondary text-secondary"><i class="bi bi-search"></i></span>
+                            <input type="text" id="query" name="query" class="form-control bg-black text-white border-secondary font-monospace" 
+                                   placeholder="Type to search..." 
+                                   hx-get="{% url 'cve_lookup' %}" 
+                                   hx-trigger="keyup changed delay:400ms, search" 
+                                   hx-target="#cve-results" 
+                                   hx-indicator="#search-indicator"
+                                   value="{{ query }}">
+                        </div>
+                        <div class="form-text text-secondary mt-1">Search requests are debounced and processed asynchronously.</div>
+                    </div>
+                    
+                    <!-- Search Indicator -->
+                    <div id="search-indicator" class="htmx-indicator text-center py-2">
+                        <div class="spinner-border spinner-border-sm text-info" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span class="text-info font-monospace ms-2">QUERYING_NVD_DATABASE...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="cve-results">
+                {% include 'utilities/cve_results_partial.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

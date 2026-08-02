@@ -1,126 +1,125 @@
-# 🔒 Ethical Hacking Portal
+# 🔒 Security Training & Penetration Testing Portal
 
-[![Django](https://img.shields.io/badge/Django-5.1%20%7C%206.0-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.0.2-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
-[![SQLite](https://img.shields.io/badge/SQLite-3.0-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
-[![WhiteNoise](https://img.shields.io/badge/Static_Serving-WhiteNoise-blue?style=for-the-badge)](https://whitenoise.readthedocs.io/)
+[![Django](https://img.shields.io/badge/Django-6.0.7-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![DRF](https://img.shields.io/badge/DRF-3.17.1-red?style=for-the-badge&logo=django&logoColor=white)](https://www.django-rest-framework.org/)
+[![JWT](https://img.shields.io/badge/JWT-SimpleJWT-darkblue?style=for-the-badge&logo=json-web-tokens)](https://django-rest-framework-simplejwt.readthedocs.io/)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16.0-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-Containerized-blue?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![pytest](https://img.shields.io/badge/pytest-Passing-brightgreen?style=for-the-badge&logo=pytest)](https://docs.pytest.org/)
 
-A secure, educational web portal designed for cybersecurity training, penetration testing resources, and interactive student collaboration. Built with Django and styled with a clean Bootstrap 5 interface, utilizing local static CSS and JS.
+An advanced, production-grade cybersecurity training platform designed for security researchers to solve CTF challenges, analyze security headers, search CVEs, and generate PDF pentest reports. Built using Django 6.0, Django REST Framework, custom TOTP 2FA security, HTMX, and containerized with Docker.
 
 ---
 
 ## 🌟 Key Features
 
-*   **Secure Authentication**: Role-based signup, sign-in, and log-out flows with Django's built-in session framework.
-*   **Password Reset Pipeline**: Multi-step password recovery workflow (request email, verification links, confirm, complete).
-*   **Extended User Profiles**: Automated profile creation for new users via Django database signals, supporting user bios, locations, and profile picture uploads.
-*   **Local Assets**: Bootstrap CSS and JS are served entirely locally (`static/css/` and `static/js/`), ensuring offline responsiveness and removing reliance on external CDNs.
-*   **Static Resource Management**: Production-ready static configuration utilizing **WhiteNoise** for automatic file compression and client caching.
-*   **Database Migrations**: Integrated database model migrations ready for SQLite or PostgreSQL.
+*   **🏆 Capture The Flag (CTF) Module:** Gamified training module. Flags are validated using secure SHA-256 hashing. Submission rate-limiting via `django-ratelimit` prevents brute-forcing, and the leaderboard updates in real-time using HTMX.
+*   **🛡️ Secure Custom 2FA (TOTP):** Two-factor authentication implemented in pure Python/Django using `pyotp` and base64 QR code rendering. Integrates seamlessly with Google Authenticator or Authy.
+*   **🔎 Async CVE Lookup Tool:** Real-time lookup querying the National Vulnerability Database (NVD) REST API using Django 6.0's async views and `httpx`. Responses are cached locally via Django's caching framework.
+*   **🔗 HTTP Security Header Analyzer:** Audits response headers (CSP, HSTS, X-Frame-Options) for public URLs, scoring configurations (A+ to F) and providing remediation insights.
+*   **📄 PDF Report Generator:** Compiles pentest findings into a professional, dark-themed PDF report using ReportLab. Tasks are managed asynchronously via Django 6.0's new native background tasks framework (`django.tasks`).
+*   **🧑💻 Profile & Image Pipeline:** Profile details with skill levels, specializations, social profiles, and points. Profile picture uploads are checked (max 2MB, formats), EXIF metadata is stripped to protect user privacy (prevents GPS leaks), and converted to `.webp` format.
+*   **🔐 Hardened Security Controls:** Enforces native Django 6.0 Content Security Policy (CSP) headers, authentication lockouts (`django-axes`) for brute-force login shielding, and sanitized write-ups (using `bleach`) to block stored XSS.
+*   **📊 REST API & Interactive Docs:** Exposes `/api/v1/` endpoints for profiles, challenges, and tools with JWT auth and auto-generated Swagger UI via `drf-spectacular` at `/api/docs/`.
+*   **🐳 Containerized Environment:** Complete Docker + docker-compose orchestration bundling Django, PostgreSQL, and Redis cache.
 
 ---
 
-## 📁 Repository Layout
-
-The project files are structured as a standard Django application:
+## 📁 Repository Structure
 
 ```text
 ethical-hacking-portal/
-├── manage.py               # Django Command Line Utility
-├── requirements.txt        # Python package dependencies
-├── .gitignore              # Ignored files (virtual envs, db files)
-├── note.txt                # In-depth architectural workflow documentation
-├── README.md               # Quick-start and Render.com deployment guide
-│
-├── myfirstpro/             # Django Project Configuration Directory
-│   ├── settings.py         # Configs (apps, middleware, static/media, database)
-│   ├── urls.py             # Root URL routing configurations
-│   ├── wsgi.py / asgi.py   # Web server integrations
+├── config/                 # Project Configuration (Renamed from myfirstpro)
+│   ├── settings/           # 12-Factor Settings (base.py, dev.py, prod.py)
+│   ├── urls.py             # Root URL Routing
+│   ├── wsgi.py / asgi.py   # WSGI/ASGI Gateways
 │   └── __init__.py
-│
-├── MSA/                    # Django Application Directory (Main Hacking Portal)
-│   ├── migrations/         # Database migrations directory
-│   ├── admin.py            # Model configurations in Django Admin
-│   ├── forms.py            # Forms for registration and profile edit validation
-│   ├── models.py           # Database schemas for Profiles and Contacts
-│   ├── urls.py             # App-specific view routing
-│   ├── views.py            # View functions and business logic
-│   └── __init__.py
-│
-├── templates/              # HTML layout elements
-│   ├── base.html           # Main template containing navbar, footer, messages and scripts
-│   ├── index.html          # Interactive landing page with information carousels
-│   ├── about.html          # Operations information and operator bios
-│   ├── services.html       # Overview of security audit offerings
-│   ├── contact.html        # Admin alert submission form
-│   ├── dashboard.html      # Logged-in training console
-│   ├── profile.html        # Public operator bio details
-│   ├── edit_profile.html   # Profile settings page
-│   ├── login.html          # User authentication portal login
-│   ├── register.html       # User authentication portal sign-up
-│   └── registration/       # Django Password Reset flow template folder
-│
-└── static/                 # Static directories
-    ├── css/
-    │   └── bootstrap.min.css      # Local Bootstrap stylesheet
-    └── js/
-        └── bootstrap.bundle.min.js # Local Bootstrap bundle scripts
+├── MSA/                    # Main Application Directory (Profiles, Auth)
+│   ├── forms.py            # User Details & File Validators
+│   ├── models.py           # User Profile & Contact schemas
+│   ├── views.py            # Logical views & Auth controller
+│   ├── views_2fa.py        # Custom 2FA registration & validation views
+│   └── tests.py            # Unit tests (initals SVG, file validators)
+├── ctf/                    # Capture The Flag Application
+│   ├── models.py           # Challenge & Submission (SHA-256 checks, scoring)
+│   ├── views.py            # Flag submission, rate limits, leaderboard
+│   └── tests.py            # Pytest tests (flag verification, scoring signals, DRF API)
+├── utilities/              # Cybersecurity tools
+│   ├── tasks.py            # PDF report background task (ReportLab)
+│   └── views.py            # Async CVE lookup & Header analyzer views
+├── writeups/               # Markdown Blog
+│   └── views.py            # Sanitized Markdown rendering (XSS protection)
+├── audit/                  # Security Audit trail
+│   ├── signals.py          # Intercepts login, logouts, failures & IPs
+│   └── models.py           # Immutable Audit entries
+├── api/                    # Centralized REST API routing
+│   ├── views.py            # DRF ViewSets & Swagger-documented endpoints
+│   └── urls.py             # JWT endpoints & Swagger UI urls
+├── templates/              # HTML layout elements (HTMX, Terminal Dark Theme)
+├── Dockerfile              # App container definition
+├── docker-compose.yml      # Multi-container orchestrator (Django, Postgres, Redis)
+├── pytest.ini              # Pytest configurations
+└── requirements.txt        # Pinned packages
 ```
 
 ---
 
-## 🚀 How to Run Locally
+## 🐳 Quick-start: Run with Docker Compose
 
-### 1. Setup Environment
-Ensure Python 3 is installed. Clone the repository, navigate into the project, and install the dependencies listed in `requirements.txt`:
+Running the entire stack (Django, PostgreSQL, and Redis) is simplified into a single command:
 
-```bash
-pip install -r requirements.txt
-```
-
-### 2. Apply Database Migrations
-Create and configure your database models:
-
-```bash
-python manage.py makemigrations MSA
-python manage.py migrate
-```
-
-### 3. Launch Development Server
-Start the local server:
-
-```bash
-python manage.py runserver
-```
-
-Now open your browser and navigate to **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)** to access the portal.
+1. **Clone the repo and navigate to directory:**
+   ```bash
+   git clone https://github.com/Sadique721/ethical-hacking-portal.git
+   cd ethical-hacking-portal
+   ```
+2. **Start the containers:**
+   ```bash
+   docker-compose up --build
+   ```
+3. **Run database migrations inside the container:**
+   ```bash
+   docker-compose exec web python manage.py migrate
+   ```
+4. **Create a superuser to access the Admin Panel:**
+   ```bash
+   docker-compose exec web python manage.py createsuperuser
+   ```
+5. **Access the portal:**
+   - Web application: http://localhost:8000
+   - Swagger API Documentation: http://localhost:8000/api/v1/docs/
+   - Django Admin (modern Jazzmin theme): http://localhost:8000/admin/
 
 ---
 
-## ☁️ Deploying on Render.com
+## 🚀 Running Locally (Without Docker)
 
-This project can be deployed easily on **[Render.com](https://render.com/)**:
+1. **Install python packages:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. **Create local environment file:**
+   Copy `.env.example` to `.env` and configure credentials:
+   ```bash
+   cp .env.example .env
+   ```
+3. **Execute database migrations:**
+   ```bash
+   python manage.py migrate
+   ```
+4. **Launch development server:**
+   ```bash
+   python manage.py runserver
+   ```
 
-### Step 1: Create a Render Web Service
-1. Log in to Render and click **New +** -> **Web Service**.
-2. Connect your GitHub repository containing this project.
+---
 
-### Step 2: Configure Environment and Commands
-Configure your web service with these specifications:
-*   **Runtime**: `Python`
-*   **Build Command**:
-    ```bash
-    python -m pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
-    ```
-*   **Start Command**:
-    ```bash
-    gunicorn myfirstpro.wsgi:application --bind 0.0.0.0:$PORT
-    ```
+## 🧪 Testing and Quality Control
 
-### Step 3: Add Environment Variables (Settings Panel)
-Add the following key-value pairs in the **Environment** section:
-*   `DEBUG`: `False` (for production safety)
-*   `SECRET_KEY`: *[A long, random secret sequence]*
-*   `ALLOWED_HOSTS`: `your-app-subdomain.onrender.com`
+We run a suite of unit and integration tests checking profile pipelines, CTF signals, and REST endpoints.
 
-Render will compile the static assets automatically during build and serve them safely via `WhiteNoise`, making your application fully functional and live!
+Run the test suite with coverage reporting:
+```bash
+pytest
+```

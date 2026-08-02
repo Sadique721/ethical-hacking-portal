@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify Login - 2FA{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg bg-dark text-white border-info">
+                <div class="card-header bg-info text-dark text-center">
+                    <h3><i class="bi bi-shield-lock"></i> 2FA Verification</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-center text-secondary">A verification code is required to complete login for user <strong>{{ username }}</strong>.</p>
+                    
+                    <form method="POST" class="mt-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="token" class="form-label">Enter 6-digit Authenticator Code:</label>
+                            <input type="text" name="token" id="token" class="form-control bg-black text-white border-secondary text-center font-monospace" placeholder="000000" maxlength="6" autofocus autocomplete="off" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-info w-100 text-dark">
+                            <i class="bi bi-box-arrow-in-right"></i> Verify and Log In
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'login' %}" class="text-secondary">Back to Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

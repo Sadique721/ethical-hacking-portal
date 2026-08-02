@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Disable 2FA{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg bg-dark text-white border-danger">
+                <div class="card-header bg-danger text-white text-center">
+                    <h3><i class="bi bi-shield-slash-fill"></i> Disable Two-Factor Authentication</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-center text-warning"><strong>Warning:</strong> Disabling Two-Factor Authentication makes your account less secure. You will only need your username and password to log in.</p>
+                    
+                    <form method="POST" class="mt-4">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger w-100 mb-3">
+                            <i class="bi bi-shield-x"></i> Yes, Disable 2FA
+                        </button>
+                        <a href="{% url 'profile' %}" class="btn btn-outline-secondary w-100">
+                            Cancel and Keep Enabled
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

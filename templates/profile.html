@@ -1,40 +1,113 @@
 {% extends 'base.html' %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Researcher Profile - {{ user.username }}{% endblock %}
 
 {% block body %}
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4><i class="bi bi-person-circle"></i> Welcome, {{ user.username }}</h4>
+            <div class="card shadow-lg bg-dark text-white border-secondary">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-terminal-fill me-2"></i> RESEARCHER_PROFILE: {{ user.username }}
+                        {% if profile.is_verified_researcher %}
+                            <span class="badge bg-info text-dark ms-2"><i class="bi bi-patch-check-fill"></i> VERIFIED</span>
+                        {% endif %}
+                    </h4>
+                    <span class="badge bg-secondary font-monospace">Rank Points: {{ profile.points }}</span>
                 </div>
-                <div class="card-body text-center">
-                    
-                    <!-- Profile Picture -->
-                    <img src="{% if user.profile.image %}{{ user.profile.image.url }}{% else %}https://via.placeholder.com/150{% endif %}" 
-                         alt="Profile Picture" 
-                         class="rounded-circle img-thumbnail mb-3" 
-                         width="150" height="150">
-                    
-                    <!-- User Information -->
-                    <p><i class="bi bi-envelope"></i> <strong>Email:</strong> {{ user.email }}</p>
-                    <p><i class="bi bi-person-check"></i> <strong>Full name:</strong> {{ user.first_name }} {{ user.last_name }} </p>
-                    <p><i class="bi bi-calendar-check"></i> <strong>Last login:</strong> {{ user.last_login }}</p>
-                    <p><i class="bi bi-calendar"></i> <strong>Joined on:</strong> {{ user.date_joined }}</p>
-                    
-                    <!-- Edit Profile Button -->
-                    <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-pencil-square"></i> Edit Profile
-                    </a>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Left column: Avatar and Core Details -->
+                        <div class="col-md-4 text-center border-end border-secondary pb-3">
+                            <img src="{{ profile.get_avatar_url }}" 
+                                 alt="Avatar" 
+                                 class="rounded-circle img-thumbnail bg-black border-secondary mb-3" 
+                                 width="150" height="150">
+                            
+                            <h5 class="mb-1 text-info">{{ user.first_name }} {{ user.last_name }}</h5>
+                            <p class="text-secondary small font-monospace">@{{ user.username }}</p>
+
+                            <!-- Social Links -->
+                            <div class="d-flex justify-content-center gap-2 my-3">
+                                {% if profile.github_url %}
+                                    <a href="{{ profile.github_url }}" target="_blank" class="btn btn-outline-light btn-sm"><i class="bi bi-github"></i></a>
+                                {% endif %}
+                                {% if profile.linkedin_url %}
+                                    <a href="{{ profile.linkedin_url }}" target="_blank" class="btn btn-outline-info btn-sm"><i class="bi bi-linkedin"></i></a>
+                                {% endif %}
+                            </div>
+
+                            <!-- 2FA Settings -->
+                            <div class="mt-4 p-2 bg-black border border-secondary rounded">
+                                <p class="small mb-2"><i class="bi bi-shield-lock"></i> <strong>2FA Security:</strong></p>
+                                {% if profile.totp_secret %}
+                                    <span class="badge bg-success mb-2">ENABLED</span>
+                                    <a href="{% url 'disable_2fa' %}" class="btn btn-danger btn-xs d-block w-100 mt-1 font-monospace" style="font-size: 11px;">DISABLE_2FA</a>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark mb-2">DISABLED</span>
+                                    <a href="{% url 'enable_2fa' %}" class="btn btn-success btn-xs d-block w-100 mt-1 font-monospace" style="font-size: 11px;">ENABLE_2FA</a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Right column: Research Details -->
+                        <div class="col-md-8 ps-md-4">
+                            <div class="mb-3">
+                                <h6 class="text-info border-bottom border-secondary pb-1">BIO / MOTTO</h6>
+                                <p class="text-light">{% if profile.bio %}{{ profile.bio }}{% else %}No bio specified yet.{% endif %}</p>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <h6 class="text-info border-bottom border-secondary pb-1">SKILL_LEVEL</h6>
+                                    <span class="badge 
+                                        {% if profile.skill_level == 'Beginner' %}bg-success
+                                        {% elif profile.skill_level == 'Intermediate' %}bg-primary
+                                        {% elif profile.skill_level == 'Advanced' %}bg-warning text-dark
+                                        {% else %}bg-danger
+                                        {% endif %} font-monospace">
+                                        {{ profile.skill_level|upper }}
+                                    </span>
+                                </div>
+                                <div class="col-6">
+                                    <h6 class="text-info border-bottom border-secondary pb-1">SPECIALIZATION</h6>
+                                    <span class="badge bg-secondary font-monospace">{{ profile.specialization }}</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6 class="text-info border-bottom border-secondary pb-1">LOCATION</h6>
+                                <p><i class="bi bi-geo-alt"></i> {% if profile.location %}{{ profile.location }}{% else %}Unknown / Proxy{% endif %}</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6 class="text-info border-bottom border-secondary pb-1">CERTIFICATIONS</h6>
+                                <p class="font-monospace text-success">{% if profile.certifications %}{{ profile.certifications }}{% else %}None claimed.{% endif %}</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6 class="text-info border-bottom border-secondary pb-1">ACCOUNT_METRICS</h6>
+                                <ul class="list-unstyled font-monospace text-secondary small">
+                                    <li>Joined: {{ user.date_joined|date:"Y-m-d H:i" }}</li>
+                                    <li>Last Login: {{ user.last_login|date:"Y-m-d H:i" }}</li>
+                                    <li>Email: {{ user.email }}</li>
+                                </ul>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{% url 'edit_profile' %}" class="btn btn-info text-dark font-monospace">
+                                    <i class="bi bi-pencil-square"></i> EDIT_PROFILE
+                                </a>
+                                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary font-monospace">
+                                    DASHBOARD <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-
 {% endblock %}

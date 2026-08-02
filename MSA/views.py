@@ -1,129 +1,149 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from datetime import datetime
-from .models import Contact, Profile
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm, EditProfileForm
+from datetime import datetime
+from .models import Contact, Profile
+from .forms import RegisterForm, EditUserForm, EditProfileForm
 
 @login_required
 def profile(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-    return render(request, 'profile.html', {'profile': profile})
+    # Ensure profile exists, then render
+    profile_obj, created = Profile.objects.get_or_create(user=request.user)
+    return render(request, 'profile.html', {'profile': profile_obj})
 
-# User Registration View
-def registers(request):
+@login_required
+def edit_profile(request):
+    profile_obj, created = Profile.objects.get_or_create(user=request.user)
+    if request.method == "POST":
+        user_form = EditUserForm(request.POST, instance=request.user)
+        profile_form = EditProfileForm(request.POST, request.FILES, instance=profile_obj)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('profile')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        user_form = EditUserForm(instance=request.user)
+        profile_form = EditProfileForm(instance=profile_obj)
+
+    return render(request, 'edit_profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'profile': profile_obj
+    })
+
+@login_required(login_url='login')
+def dashboard(request):
+    from ctf.models import Challenge, Submission
+    from audit.models import AuditLog
+    
+    profile_obj = request.user.profile
+    total_challenges = Challenge.objects.count()
+    solved_count = Submission.objects.filter(user=request.user, is_correct=True).count()
+    
+    # Calculate Rank
+    user_points = profile_obj.points
+    rank = Profile.objects.filter(points__gt=user_points).count() + 1
+    
+    # Fetch recent audit logs
+    logs = AuditLog.objects.filter(user=request.user).order_by('-timestamp')[:5]
+    
+    # Prepare statistics for charts (e.g. challenges category breakdown)
+    # Get solved counts by category
+    categories = [cat[0] for cat in Challenge.CATEGORIES]
+    solved_by_cat = []
+    total_by_cat = []
+    
+    for cat in categories:
+        total_by_cat.append(Challenge.objects.filter(category=cat).count())
+        solved_by_cat.append(Submission.objects.filter(user=request.user, challenge__category=cat, is_correct=True).count())
+    
+    context = {
+        'total_challenges': total_challenges,
+        'solved_count': solved_count,
+        'points': user_points,
+        'rank': rank,
+        'recent_logs': logs,
+        'categories': categories,
+        'solved_by_cat': solved_by_cat,
+        'total_by_cat': total_by_cat,
+    }
+    return render(request, "dashboard.html", context)
+
+def user_login(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+        
+    if request.method == "POST":
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "")
+        
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            # Check if user has TOTP 2FA enabled
+            profile_obj, created = Profile.objects.get_or_create(user=user)
+            if profile_obj.totp_secret:
+                # Store user ID in session temporarily, redirect to 2FA page
+                request.session['pre_2fa_user_id'] = user.id
+                messages.info(request, "Two-Factor Authentication is required.")
+                return redirect('verify_2fa')
+            
+            # Standard login
+            login(request, user)
+            messages.success(request, "Login successful!")
+            return redirect("dashboard")
+        else:
+            messages.error(request, "Invalid username or password!")
+            
+    return render(request, "login.html")
+
+def user_register(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Automatically log in the user after registration
-            messages.success(request, "Registration successful!")
-            return redirect('profile')  # Redirect to profile page
+            # Ensure profile object is created automatically
+            Profile.objects.create(user=user)
+            
+            messages.success(request, "Registration successful! Please log in.")
+            return redirect("login")
         else:
             messages.error(request, "Error in registration. Please check your inputs.")
     else:
         form = RegisterForm()
-
-    return render(request, 'registers.html', {'form': form})
-
-# User Profile View
-@login_required
-def profile(request):
-    return render(request, 'profile.html', {'user': request.user})
-
-# Edit Profile View
-@login_required
-def edit_profile(request):
-    if request.method == "POST":
-        form = EditProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('profile')
-    else:
-        form = EditProfileForm(instance=request.user)
-
-    return render(request, 'edit_profile.html', {'form': form})
-
-@login_required(login_url='login')  # Redirects to login if user is not authenticated
-def dashboard(request):
-    return render(request, "dashboard.html")
-
-@login_required(login_url='login')
-def user_profile(request):
-    return render(request, "profile.html")
-
-
-def user_login(request):
-    if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, "Login successful!")
-            return redirect("index")  # Redirect to home page
-        else:
-            messages.error(request, "Invalid username or password!")
-    return render(request, "login.html")
-
-def user_register(request):
-    if request.method == "POST":
-        username = request.POST["username"]
-        email = request.POST["email"]
-        password1 = request.POST["password1"]
-        password2 = request.POST["password2"]
-
-        if password1 == password2:
-            if User.objects.filter(username=username).exists():
-                messages.error(request, "Username already taken!")
-            elif User.objects.filter(email=email).exists():
-                messages.error(request, "Email already registered!")
-            else:
-                user = User.objects.create_user(username=username, email=email, password=password1)
-                user.save()
-                messages.success(request, "Registration successful! Please log in.")
-                return redirect("login")
-        else:
-            messages.error(request, "Passwords do not match!")
-    
-    return render(request, "register.html")
+        
+    return render(request, "register.html", {'form': form})
 
 def user_logout(request):
     logout(request)
     messages.success(request, "You have been logged out!")
     return redirect("login")
 
-
-# Create your views here.
 def index(request):
-    context = {
-        'variable1': "seven two one",
-        'variable2': "seven two nine"
-    }
     return render(request, 'index.html')
-   # return HttpResponse("this is home page")
 
 def about(request):
-     return render(request, 'about.html')
-    #return HttpResponse("this is about page")
-
+    # Retrieve top researchers for public stats
+    top_researchers = Profile.objects.select_related('user').order_by('-points')[:4]
+    return render(request, 'about.html', {'top_researchers': top_researchers})
 
 def services(request):
-      return render(request, 'services.html')
-   # return HttpResponse("this is  services page")
+    return render(request, 'services.html')
 
 def contact(request):
-      if request.method == "POST":
-           name = request.POST.get('name')
-           email = request.POST.get('email')
-           number = request.POST.get('number')
-           desc = request.POST.get('desc')
-           contact = Contact(name=name, email=email, number=number, desc=desc, date=datetime.today())
-           contact.save()
-           messages.success(request, "Your details successfully submited!")
-      return render(request, 'contact.html')
-    #return HttpResponse("this is contact page")
+    if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        number = request.POST.get('number')
+        desc = request.POST.get('desc')
+        contact_obj = Contact(name=name, email=email, number=number, desc=desc, date=datetime.today())
+        contact_obj.save()
+        messages.success(request, "Your details were successfully submitted!")
+    return render(request, 'contact.html')
