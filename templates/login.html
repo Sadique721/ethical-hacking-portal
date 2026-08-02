@@ -1,41 +1,85 @@
 {% extends "base.html" %}
 
-{% block title %} Login | Agrotech {% endblock title %}
+{% block title %}Login{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-lg">
-                <div class="card-header bg-dark text-white text-center">
-                    <h3>Login</h3>
-                </div>
-                <div class="card-body">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                    
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username" required>
+<div class="container min-vh-100 d-flex align-items-center justify-content-center py-5">
+    <div class="col-12 col-md-5 col-lg-4">
+
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center bg-black border border-success rounded-circle mb-3" style="width:64px;height:64px;">
+                <i class="bi bi-terminal-fill text-success fs-3"></i>
+            </div>
+            <h2 class="text-white fw-bold font-monospace">PORTAL_LOGIN</h2>
+            <p class="text-secondary font-monospace small">Authenticate to access the hacking console</p>
+        </div>
+
+        <!-- Card -->
+        <div class="card bg-dark border-secondary">
+            <div class="card-header bg-black border-secondary py-2 font-monospace text-success small">
+                <i class="bi bi-circle-fill text-danger me-1" style="font-size:8px;"></i>
+                <i class="bi bi-circle-fill text-warning me-1" style="font-size:8px;"></i>
+                <i class="bi bi-circle-fill text-success me-1" style="font-size:8px;"></i>
+                <span class="ms-2">bash -- auth.sh</span>
+            </div>
+            <div class="card-body p-4">
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} border-0 font-monospace small py-2" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ message }}
                         </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label text-success font-monospace small">USERNAME</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-black border-secondary text-secondary">
+                                <i class="bi bi-person-fill"></i>
+                            </span>
+                            <input type="text" name="username" id="username"
+                                   class="form-control bg-black text-white border-secondary font-monospace"
+                                   placeholder="your_username" required autofocus>
                         </div>
-                        <button type="submit" class="btn btn-dark w-100">Login</button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <p>Don't have an account? <a href="{% url 'register' %}">Register</a></p>
-                        <p><a href="{% url 'password_reset' %}">Forgot Password?</a></p>
                     </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label text-success font-monospace small">PASSWORD</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-black border-secondary text-secondary">
+                                <i class="bi bi-lock-fill"></i>
+                            </span>
+                            <input type="password" name="password" id="password"
+                                   class="form-control bg-black text-white border-secondary font-monospace"
+                                   placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 font-monospace fw-bold">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>AUTHENTICATE
+                    </button>
+                </form>
+
+                <hr class="border-secondary my-3">
+
+                <div class="text-center font-monospace small text-secondary">
+                    <span>No account? </span>
+                    <a href="{% url 'register' %}" class="text-success text-decoration-none">REGISTER_NOW</a>
                 </div>
+                <div class="text-center font-monospace small mt-2">
+                    <a href="{% url 'password_reset' %}" class="text-secondary text-decoration-none">
+                        <i class="bi bi-key me-1"></i>Forgot password?
+                    </a>
+                </div>
+
             </div>
         </div>
+
     </div>
 </div>
 {% endblock body %}
