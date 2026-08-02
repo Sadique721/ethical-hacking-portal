@@ -1,35 +1,182 @@
-{% extends 'base.html' %} {# Assuming you have a base.html file #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us{% endblock %}
 
 {% block body %}
-<div class="container-fluid px-0 mb-3">
-  <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=600&h=400&fit=crop" width="1000px" height="1000px" class="d-block w-100" alt="...">
-  <div class="carousel-caption d-none d-md-block">
-    <h5>First slide label</h5>
-    <p>Some representative placeholder content for the first slide.</p>
-  </div>
-</div>
-  <h1 style="text-align: center;">Contact Us</h1>
-<div class="container py-4">
-<form method="post" action="{% url 'contact' %}">
-{% csrf_token %}
-  <div class="mb-3">
-    <label for="email" class="form-label">Email address</label>
-    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your e-mail" aria-describedby="emailHelp">
-    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-  </div>
-  <div class="mb-3">
-    <label for="name" class="form-label">Name</label>
-    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name">
-  </div>
-  <div class="mb-3">
-    <label for="number" class="form-label">Phone Number</label>
-    <input type="number" class="form-control" id="number" name="number" placeholder="Enter your number">
-  </div>
-  <div class="mb-3">
-   <label for="desc" class="form-label">Tell me about what you want to me for...</label>
-   <textarea class="form-control" id="desc" name="desc" rows="3"></textarea>
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <div class="d-inline-flex align-items-center justify-content-center bg-black border border-success rounded-circle mb-3" style="width:64px;height:64px;">
+                    <i class="bi bi-envelope-fill text-success fs-3"></i>
+                </div>
+                <h1 class="text-white fw-bold font-monospace">CONTACT_US</h1>
+                <p class="text-secondary font-monospace small">Send us a message and we'll get back to you within 24 hours.</p>
+            </div>
+
+            <!-- Success Message -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success border-0 bg-dark border-success font-monospace mb-4" role="alert"
+                         style="border-left: 3px solid #22c55e !important;">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="row g-4">
+                <!-- Contact Form -->
+                <div class="col-md-7">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-header bg-black border-secondary py-2 font-monospace text-success small">
+                            <i class="bi bi-circle-fill text-danger me-1" style="font-size:8px;"></i>
+                            <i class="bi bi-circle-fill text-warning me-1" style="font-size:8px;"></i>
+                            <i class="bi bi-circle-fill text-success me-1" style="font-size:8px;"></i>
+                            <span class="ms-2">contact_form.sh</span>
+                        </div>
+                        <div class="card-body p-4">
+                            <form method="POST" action="{% url 'contact' %}">
+                                {% csrf_token %}
+
+                                <div class="mb-3">
+                                    <label for="name" class="form-label text-success font-monospace small">YOUR NAME</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-black border-secondary text-secondary">
+                                            <i class="bi bi-person-fill"></i>
+                                        </span>
+                                        <input type="text" id="name" name="name"
+                                               class="form-control bg-black text-white border-secondary font-monospace"
+                                               placeholder="John Doe" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label text-success font-monospace small">EMAIL ADDRESS</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-black border-secondary text-secondary">
+                                            <i class="bi bi-envelope-fill"></i>
+                                        </span>
+                                        <input type="email" id="email" name="email"
+                                               class="form-control bg-black text-white border-secondary font-monospace"
+                                               placeholder="you@example.com" required>
+                                    </div>
+                                    <div class="form-text text-secondary font-monospace" style="font-size:11px;">
+                                        <i class="bi bi-shield-lock-fill me-1 text-success"></i>Your email is safe with us.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="number" class="form-label text-success font-monospace small">PHONE NUMBER</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-black border-secondary text-secondary">
+                                            <i class="bi bi-telephone-fill"></i>
+                                        </span>
+                                        <input type="tel" id="number" name="number"
+                                               class="form-control bg-black text-white border-secondary font-monospace"
+                                               placeholder="+91 9876543210">
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="desc" class="form-label text-success font-monospace small">MESSAGE</label>
+                                    <textarea id="desc" name="desc" rows="5"
+                                              class="form-control bg-black text-white border-secondary font-monospace"
+                                              placeholder="Describe your query, collaboration request, or security concern..."
+                                              required></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-success w-100 font-monospace fw-bold">
+                                    <i class="bi bi-send-fill me-2"></i>SEND_MESSAGE
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="col-md-5 d-flex flex-column gap-3">
+
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="d-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded me-3" style="width:40px;height:40px;">
+                                    <i class="bi bi-envelope-fill text-success"></i>
+                                </div>
+                                <div>
+                                    <p class="text-secondary font-monospace mb-0" style="font-size:11px;">EMAIL</p>
+                                    <a href="mailto:mdsadiqueamin721786@gmail.com" class="text-white font-monospace small text-decoration-none">
+                                        mdsadiqueamin721786@gmail.com
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="d-flex align-items-center justify-content-center bg-info bg-opacity-10 rounded me-3" style="width:40px;height:40px;">
+                                    <i class="bi bi-github text-info"></i>
+                                </div>
+                                <div>
+                                    <p class="text-secondary font-monospace mb-0" style="font-size:11px;">GITHUB</p>
+                                    <a href="https://github.com/Sadique721" target="_blank" class="text-white font-monospace small text-decoration-none">
+                                        github.com/Sadique721
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center justify-content-center bg-warning bg-opacity-10 rounded me-3" style="width:40px;height:40px;">
+                                    <i class="bi bi-geo-alt-fill text-warning"></i>
+                                </div>
+                                <div>
+                                    <p class="text-secondary font-monospace mb-0" style="font-size:11px;">LOCATION</p>
+                                    <p class="text-white font-monospace small mb-0">India 🇮🇳</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body p-3">
+                            <p class="text-success font-monospace small mb-2">
+                                <i class="bi bi-clock-fill me-1"></i>RESPONSE TIME
+                            </p>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1 bg-black" style="height:6px;">
+                                    <div class="progress-bar bg-success" style="width:90%;"></div>
+                                </div>
+                                <small class="text-success font-monospace">~24h</small>
+                            </div>
+                            <p class="text-secondary font-monospace mt-2 mb-0" style="font-size:11px;">
+                                We typically respond within 24 hours on business days.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- CTF/Collab badge -->
+                    <div class="card border-0" style="background: linear-gradient(135deg, #0d1117 0%, #1a2744 100%); border: 1px solid #1d4ed8 !important;">
+                        <div class="card-body p-3 text-center">
+                            <i class="bi bi-flag-fill text-info fs-4 mb-2 d-block"></i>
+                            <p class="text-white font-monospace small fw-bold mb-1">CTF COLLABORATION</p>
+                            <p class="text-secondary font-monospace mb-0" style="font-size:11px;">
+                                Interested in CTF team-ups, bug bounty, or research collaboration? Reach out!
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 {% endblock body %}
