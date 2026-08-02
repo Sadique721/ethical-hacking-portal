@@ -20,6 +20,16 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
+# CSRF trusted origins — required for HTTPS POST on Render/production
+CSRF_TRUSTED_ORIGINS = env.list(
+    'CSRF_TRUSTED_ORIGINS',
+    default=[
+        'https://ethical-hacking-portal.onrender.com',
+        'http://127.0.0.1:8000',
+        'http://localhost:8000',
+    ]
+)
+
 # Application definition
 INSTALLED_APPS = [
     # Modern Admin Theme
@@ -146,8 +156,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authentication redirects
-LOGIN_URL = '/login'
-LOGIN_REDIRECT_URL = 'profile'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
 # Email backend configuration
@@ -178,16 +188,21 @@ SECURE_CSP = {
     'style-src': [
         CSP.SELF,
         'https://cdn.jsdelivr.net',
+        'https://fonts.googleapis.com',
     ],
     'font-src': [
         CSP.SELF,
         'https://cdn.jsdelivr.net',
+        'https://fonts.googleapis.com',
+        'https://fonts.gstatic.com',
     ],
     'img-src': [
         CSP.SELF,
         'data:',
         'https://via.placeholder.com',
         'https://cdn.jsdelivr.net',
+        'https://fonts.googleapis.com',
+        'https://fonts.gstatic.com',
     ],
     'connect-src': [
         CSP.SELF,
