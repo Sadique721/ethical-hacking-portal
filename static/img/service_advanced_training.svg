@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#0a0a0f"/>
+  <rect x="40" y="40" width="320" height="180" rx="8" fill="#111827" stroke="#7c3aed" stroke-width="1.5"/>
+  <rect x="40" y="40" width="320" height="30" rx="8" fill="#1e1b4b"/>
+  <circle cx="60" cy="55" r="6" fill="#ef4444"/>
+  <circle cx="80" cy="55" r="6" fill="#fbbf24"/>
+  <circle cx="100" cy="55" r="6" fill="#34d399"/>
+  <text x="200" y="59" font-family="monospace" font-size="10" fill="#a78bfa" text-anchor="middle">advanced_exploit.py</text>
+  <text x="55" y="95" font-family="monospace" font-size="9" fill="#7c3aed">import</text>
+  <text x="95" y="95" font-family="monospace" font-size="9" fill="#e2e8f0"> exploit_framework</text>
+  <text x="55" y="110" font-family="monospace" font-size="9" fill="#7c3aed">class</text>
+  <text x="88" y="110" font-family="monospace" font-size="9" fill="#60a5fa"> AdvancedPenTest</text>
+  <text x="55" y="128" font-family="monospace" font-size="9" fill="#e2e8f0">  payload =</text>
+  <text x="130" y="128" font-family="monospace" font-size="9" fill="#34d399"> shellcode_gen()</text>
+  <text x="55" y="143" font-family="monospace" font-size="9" fill="#e2e8f0">  result =</text>
+  <text x="115" y="143" font-family="monospace" font-size="9" fill="#f87171"> inject(target)</text>
+  <text x="55" y="158" font-family="monospace" font-size="9" fill="#6b7280">  # Buffer overflow</text>
+  <text x="55" y="178" font-family="monospace" font-size="9" fill="#7c3aed">def</text>
+  <text x="79" y="178" font-family="monospace" font-size="9" fill="#60a5fa"> privilege_escalate</text>
+  <text x="255" y="178" font-family="monospace" font-size="9" fill="#e2e8f0">():</text>
+  <text x="55" y="195" font-family="monospace" font-size="9" fill="#e2e8f0">  sudo_bypass()</text>
+  <text x="200" y="245" font-family="'Outfit',Arial,sans-serif" font-size="16" font-weight="bold" fill="#a78bfa" text-anchor="middle">ADVANCED HACKING TRAINING</text>
+  <text x="200" y="265" font-family="monospace" font-size="10" fill="#6b7280" text-anchor="middle">Master exploitation techniques.</text>
+</svg>
