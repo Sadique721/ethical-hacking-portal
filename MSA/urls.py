@@ -6,24 +6,24 @@ from . import views_2fa
 urlpatterns = [
     # Main pages
     path('', views.index, name='index'),
-    path('about', views.about, name='about'),
-    path('services', views.services, name='services'),
-    path('contact', views.contact, name='contact'),
+    path('about/', views.about, name='about'),
+    path('services/', views.services, name='services'),
+    path('contact/', views.contact, name='contact'),
 
     # Dashboard & Profile
-    path('dashboard', views.dashboard, name='dashboard'),
-    path('profile', views.profile, name='profile'),
-    path('edit_profile', views.edit_profile, name='edit_profile'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('profile/', views.profile, name='profile'),
+    path('edit_profile/', views.edit_profile, name='edit_profile'),
 
     # Authentication
-    path('login', views.user_login, name='login'),
-    path('logout', views.user_logout, name='logout'),
-    path('register', views.user_register, name='register'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('register/', views.user_register, name='register'),
 
     # Custom TOTP 2FA
-    path('enable-2fa', views_2fa.enable_2fa, name='enable_2fa'),
-    path('disable-2fa', views_2fa.disable_2fa, name='disable_2fa'),
-    path('verify-2fa', views_2fa.verify_2fa, name='verify_2fa'),
+    path('enable-2fa/', views_2fa.enable_2fa, name='enable_2fa'),
+    path('disable-2fa/', views_2fa.disable_2fa, name='disable_2fa'),
+    path('verify-2fa/', views_2fa.verify_2fa, name='verify_2fa'),
 
     # Password Reset
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='password_reset_form.html'), name='password_reset'),
