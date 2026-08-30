@@ -32,6 +32,20 @@
 </tr>
 </table>
 
+<!-- ========== NEW: SYSTEM DIAGRAM SECTION ========== -->
+## 📊 System Architecture & Workflow
+
+```mermaid
+flowchart TD
+    A[Hacker / Pentester Sandbox] --> B[Django Web portal]
+    B --> C{Security Labs}
+    C --> D[SQL Injection Lab]
+    C --> E[XSS vulnerability Sandbox]
+    C --> F[Secure Coding Reference]
+    D --> G[DB Attack Simulation]
+    E --> H[Script Injection Simulation]
+```
+
 ---
 
 # 🔒 Security Training & Penetration Testing Portal
